@@ -1,0 +1,127 @@
+.ag-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; // Take full height of parent
+    width: 100%; // Take full width of parent
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #f0f2f5; // Light background for the container
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .grid-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .search-bar {
+    flex-grow: 1;
+    margin-right: 20px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+      outline: none;
+    }
+  }
+  
+  .export-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .export-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+    &.export-all {
+      background-color: #28a745; // Green for export all
+      color: white;
+  
+      &:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+  
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
+  
+    &:not(.export-all) {
+      background-color: #007bff; // Blue for export visible
+      color: white;
+  
+      &:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+  
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+  
+  ag-grid-angular {
+    flex-grow: 1; // Allow the grid to take available space
+    width: 100%;
+    height: calc(100% - 80px); // Adjust height to account for controls and padding
+    border-radius: 8px;
+    overflow: hidden; // Ensures rounded corners are applied
+  }
+  
+  /* AG-Grid specific overrides for better aesthetics */
+  .ag-theme-quartz {
+    --ag-foreground-color: #333;
+    --ag-background-color: #ffffff;
+    --ag-header-background-color: #e9ecef;
+    --ag-header-foreground-color: #495057;
+    --ag-odd-row-background-color: #f8f9fa;
+    --ag-border-color: #dee2e6;
+    --ag-row-hover-color: #e2e6ea;
+    --ag-selected-row-background-color: #cce5ff;
+    --ag-font-family: 'Inter', sans-serif;
+    --ag-font-size: 14px;
+    --ag-grid-size: 8px; /* Padding and spacing */
+    --ag-row-height: 38px;
+    --ag-header-height: 40px;
+    --ag-tooltip-background-color: #333;
+    --ag-tooltip-text-color: #fff;
+    --ag-range-selection-border-color: #007bff;
+    --ag-range-selection-background-color: rgba(0, 123, 255, 0.1);
+    --ag-input-focus-border-color: #007bff;
+    --ag-input-focus-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    --ag-control-panel-background-color: #ffffff;
+    --ag-control-panel-border-color: #dee2e6;
+    --ag-control-panel-button-background-color: #007bff;
+    --ag-control-panel-button-color: white;
+    --ag-control-panel-button-hover-background-color: #0056b3;
+  }
+  

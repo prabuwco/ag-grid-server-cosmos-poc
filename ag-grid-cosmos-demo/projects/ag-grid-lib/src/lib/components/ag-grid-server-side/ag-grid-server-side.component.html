@@ -1,0 +1,39 @@
+<div class="ag-grid-container">
+    <div class="grid-controls">
+      <div class="search-bar">
+        <input
+          type="text"
+          [(ngModel)]="globalSearchText"
+          (input)="onGlobalSearchInput($event)"
+          placeholder="Global Search..."
+          class="search-input"
+        />
+      </div>
+      <div class="export-buttons">
+        <button (click)="exportVisibleDataToExcel()" class="export-button">Export Visible</button>
+        <button (click)="exportAllDataToExcel()" class="export-button export-all">Export All</button>
+      </div>
+    </div>
+  
+    <ag-grid-angular
+      #agGrid
+      class="ag-theme-quartz"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="rowModelType"
+      [pagination]="pagination"
+      [paginationPageSize]="paginationPageSize"
+      [cacheBlockSize]="cacheBlockSize"
+      [maxBlocksInCache]="maxBlocksInCache"
+      [enableBrowserTooltips]="enableBrowserTooltips"
+      [tooltipShowDelay]="tooltipShowDelay"
+      [rowBuffer]="rowBuffer"
+      [suppressScrollOnNewData]="suppressScrollOnNewData"
+      [animateRows]="animateRows"
+      [enableRangeSelection]="enableRangeSelection"
+      [getRowId]="getRowId"
+      (gridReady)="onGridReady($event)"
+      (firstDataRendered)="gridApi.sizeColumnsToFit()"
+    ></ag-grid-angular>
+  </div>
+  

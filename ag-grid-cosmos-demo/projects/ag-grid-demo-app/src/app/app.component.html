@@ -1,0 +1,16 @@
+<div class="app-container">
+  <h1>{{ title }}</h1>
+
+  <div class="main-content">
+    <ag-grid-server-side
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [paginationPageSize]="20"
+      [cacheBlockSize]="100"
+      [maxBlocksInCache]="10"
+      (gridApiChanged)="onGridApiChanged($event)"
+      (gridColumnApiChanged)="onGridColumnApiChanged($event)"
+      (rowDataUpdated)="onRowDataUpdated($event)"
+    ></ag-grid-server-side>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; // Full viewport height
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+    background-color: #eef2f7; // Light background
+    color: #333;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+  }
+  
+  .main-content {
+    flex-grow: 1; // Allows the content area to take up remaining space
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden; // Ensures content respects border-radius
+  }
+  
+  /* Optional: Add some global styles for AG Grid to ensure it fits well */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent body scroll if grid is full height */
+  }
+  
