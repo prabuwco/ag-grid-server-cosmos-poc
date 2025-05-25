@@ -114,7 +114,6 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
       animateRows: this.animateRows,
       cellSelection: this.cellSelection,
       getRowId: this.getRowId,
-      debug: true,
       overlayNoRowsTemplate: `<span class="ag-overlay-loading-center" style="color: red;">
       <i class="fas fa-exclamation-triangle"></i> No Rows to Show or Error Loading Data.
     </span>`,
@@ -250,19 +249,19 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
    * Exports all records from the backend to an Excel file.
    */
   exportAllDataToExcel(): void {
-   
+
     console.log('Exporting all data to Excel...');
-    this.gridOptions.loadingOverlayComponent = true; 
+    this.gridOptions.loadingOverlayComponent = true;
 
     this.dataService.exportAllRecords<T>(this.exportAllEndpointUrl).subscribe({
       next: (blob: Blob) => {
         this.downloadFile(blob, 'AllRecords.xlsx');
         console.log('All data exported successfully.');
-        this.gridOptions.loadingOverlayComponent = false; 
+        this.gridOptions.loadingOverlayComponent = false;
       },
       error: (error) => {
         console.error('Error exporting all data:', error);
-        this.gridOptions.loadingOverlayComponent = false; 
+        this.gridOptions.loadingOverlayComponent = false;
         // Optionally, show a user-friendly error message
       }
     });
@@ -297,7 +296,7 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
       .map(col => col.getColId())
       .filter(colId => colId !== 'ag-Grid-AutoColumn'); // Exclude internal AG Grid columns
 
-    const exportRequest : ExportRequest<T> = {
+    const exportRequest: ExportRequest<T> = {
       records: visibleRows,
       columnKeys: visibleColumnKeys
     };

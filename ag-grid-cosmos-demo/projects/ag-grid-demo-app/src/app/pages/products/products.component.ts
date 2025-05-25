@@ -24,6 +24,7 @@ export class ProductsComponent {
     { field: 'name', headerName: 'Product Name', filter: 'agTextColumnFilter' },
     { field: 'category', headerName: 'Product Category', filter: 'agTextColumnFilter' },
     { field: 'value', headerName: 'Price', filter: 'agNumberColumnFilter', floatingFilter: false },
+    { field: 'description', headerName: 'Description', filter: 'agTextColumnFilter' },
     {
       field: 'date', headerName: 'Date', filter: 'agDateColumnFilter',
       valueFormatter: (params) => {
