@@ -66,8 +66,7 @@
             ],
             "styles": [
               "projects/ag-grid-demo-app/src/styles.scss",
-              "node_modules/ag-grid-community/styles/ag-grid.css",
-              "node_modules/ag-grid-community/styles/ag-theme-quartz.css"  
+               "node_modules/ag-grid-community/styles/ag-theme-quartz.css"  
             ],
             "scripts": []
           },

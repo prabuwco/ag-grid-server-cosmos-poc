@@ -1,0 +1,9 @@
+
+<div class="main-content">
+  <h1>{{ title }}</h1>
+  <ag-grid-server-side
+    [columnDefs]="columnDefs"   
+    (gridApiChanged)="onGridApiChanged($event)"
+    (rowDataUpdated)="onRowDataUpdated($event)"
+  ></ag-grid-server-side>
+</div>

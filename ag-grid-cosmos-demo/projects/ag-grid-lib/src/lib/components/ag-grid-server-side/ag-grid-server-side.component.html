@@ -18,21 +18,8 @@
     <ag-grid-angular
       #agGrid
       class="ag-theme-quartz"
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [rowModelType]="rowModelType"
-      [pagination]="pagination"
-      [paginationPageSize]="paginationPageSize"
-      [cacheBlockSize]="cacheBlockSize"
-      [maxBlocksInCache]="maxBlocksInCache"
-      [enableBrowserTooltips]="enableBrowserTooltips"
-      [tooltipShowDelay]="tooltipShowDelay"
-      [rowBuffer]="rowBuffer"
-      [suppressScrollOnNewData]="suppressScrollOnNewData"
-      [animateRows]="animateRows"
-      [enableRangeSelection]="enableRangeSelection"
-      [getRowId]="getRowId"
-      (gridReady)="onGridReady($event)"     
+      [gridOptions]="gridOptions"
+      (gridReady)="onGridReady($event)"        
       (firstDataRendered)="gridApi.sizeColumnsToFit()"
     ></ag-grid-angular>
   </div>

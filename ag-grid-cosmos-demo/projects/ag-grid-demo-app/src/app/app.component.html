@@ -1,17 +1,12 @@
 <div class="app-container">
-  <h1>{{ title }}</h1>
-
-  <div class="main-content">
-    <ag-grid-server-side
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [paginationPageSize]="20"
-      [cacheBlockSize]="100"
-      [maxBlocksInCache]="10"
-      [pagination]="true"
-      [rowModelType]="'serverSide'"     
-      (gridApiChanged)="onGridApiChanged($event)"
-      (rowDataUpdated)="onRowDataUpdated($event)"
-      ></ag-grid-server-side>
+  <nav class="navbar">
+    <a routerLink="/" routerLinkActive="active" class="nav-link"  [routerLinkActiveOptions]="{ exact: true }">Products</a>
+    <a routerLink="/customers" routerLinkActive="active" class="nav-link">Customers</a>
+    <a routerLink="/orders" routerLinkActive="active" class="nav-link">Orders</a>
+  </nav>
+ 
+  <router-outlet></router-outlet>
   </div>
-</div>
+
+
+

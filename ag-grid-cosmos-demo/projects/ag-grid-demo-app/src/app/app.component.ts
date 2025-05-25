@@ -1,4 +1,5 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ColDef, GridApi /* Removed ColumnApi */ } from 'ag-grid-community'; // Removed ColumnApi
 import { AgGridServerSideComponent } from 'ag-grid-lib'; // Import the reusable component
 import { CosmosItem } from 'ag-grid-lib'; // Import the model
@@ -7,7 +8,7 @@ import { CosmosItem } from 'ag-grid-lib'; // Import the model
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false // Ensure this is false if you are using this in a module context
+  imports: [RouterOutlet, RouterLink, RouterLinkActive] 
 })
 export class AppComponent implements AfterViewInit {
   title = 'AG Grid Cosmos DB Demo';

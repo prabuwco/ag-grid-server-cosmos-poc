@@ -2,10 +2,49 @@
   display: flex;
   flex-direction: column;
   height: 100vh; // Full viewport height
-  padding: 20px;
+  padding: 0; /* Remove padding from app-container, add to content */
   font-family: 'Inter', sans-serif;
   background-color: #eef2f7; // Light background
   color: #333;
+}
+
+.navbar {
+  background-color: #2c3e50;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  color: #ecf0f1;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: #34495e;
+    color: #ffffff;
+  }
+
+  &.active {
+    background-color: #007bff;
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+  }
+}
+
+/* Styles for the router-outlet content */
+router-outlet + * { /* Selects the component rendered by router-outlet */
+  flex-grow: 1;
+  display: flex; /* Make the routed component a flex container */
+  flex-direction: column;
+  padding: 20px; /* Add padding to the content area */
+  box-sizing: border-box;
 }
 
 h1 {
@@ -17,14 +56,13 @@ h1 {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
 }
 
-.main-content {
-  flex-grow: 1; // Allows the content area to take up remaining space
+
+
+/* Add this to ensure the ag-grid-server-side component takes full height */
+ag-grid-server-side {
   display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden; // Ensures content respects border-radius
+  flex-grow: 1;
+  height: 100%;
 }
 
 /* Optional: Add some global styles for AG Grid to ensure it fits well */
@@ -33,8 +71,12 @@ body {
   padding: 0;
   overflow: hidden; /* Prevent body scroll if grid is full height */
 }
-ag-grid-server-side {
-  display: flex; /* Make it a flex container */
-  flex-grow: 1; /* Allow it to grow and fill available space */
-  height: 100%; /* Ensure it takes 100% height of its flex parent */
+.main-content { /* This class is now used by page components */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }

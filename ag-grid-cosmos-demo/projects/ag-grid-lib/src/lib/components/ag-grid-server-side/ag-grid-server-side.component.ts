@@ -8,7 +8,8 @@ import {
   IServerSideGetRowsParams,
   ValueFormatterParams,
   GetRowIdParams,
-  LoadSuccessParams // Import LoadSuccessParams for the new success callback
+  LoadSuccessParams, // Import LoadSuccessParams for the new success callback
+  GridOptions
 } from 'ag-grid-community';
 import { DataService } from '../../services/data.service';
 import { GridRequest } from '../../models/grid-request.model';
@@ -46,13 +47,16 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
   @Input() rowBuffer: number = 0; // No row buffer needed for server-side
   @Input() suppressScrollOnNewData: boolean = true; // Prevents scroll reset on new data
   @Input() animateRows: boolean = true;
-  @Input() enableRangeSelection: boolean = true;
+  @Input() cellSelection: boolean = true;
   @Input() getRowId: ((params: GetRowIdParams) => string) | undefined; // Function to get unique row ID
+  
 
   // Outputs for parent component to react to grid events or get API instances
   @Output() gridReady = new EventEmitter<GridReadyEvent>();
   @Output() gridApiChanged = new EventEmitter<GridApi>();
   @Output() rowDataUpdated = new EventEmitter<CosmosItem[]>();
+
+  public gridOptions: GridOptions = {};
 
   public gridApi!: GridApi;
   public serverSideDatasource!: IServerSideDatasource;
@@ -68,7 +72,23 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
     if (!this.getRowId) {
       this.getRowId = (params: GetRowIdParams) => params.data.id;
     }
-
+    this.gridOptions = {
+      columnDefs: this.columnDefs,
+      defaultColDef: this.defaultColDef,
+      rowModelType: this.rowModelType,
+      pagination: this.pagination,
+      paginationPageSize: this.paginationPageSize,
+      cacheBlockSize: this.cacheBlockSize,
+      maxBlocksInCache: this.maxBlocksInCache,
+      enableBrowserTooltips: this.enableBrowserTooltips,
+      tooltipShowDelay: this.tooltipShowDelay,
+      rowBuffer: this.rowBuffer,
+      suppressScrollOnNewData: this.suppressScrollOnNewData,
+      animateRows: this.animateRows,
+      cellSelection: this.cellSelection,
+      getRowId: this.getRowId,     
+      debug: true
+    };
     this.setupGlobalSearchDebounce();
   }
 
