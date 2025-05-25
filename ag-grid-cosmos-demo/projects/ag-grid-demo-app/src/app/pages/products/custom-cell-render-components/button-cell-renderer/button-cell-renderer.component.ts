@@ -29,7 +29,7 @@ export class ButtonCellRendererComponent implements ICellRendererAngularComp {
   onClick(): void {
     if (this.params.data) {
       // Use alert to display the JSON string representation of the row data
-      alert('Row Data:\n' + JSON.stringify(this.params.data, null, 2));
+     // alert('Row Data:\n' + JSON.stringify(this.params.data, null, 2));
       console.log('Clicked row data:', this.params.data); // Also log to console for debugging
     } else {
       alert('No row data found for this row.');
