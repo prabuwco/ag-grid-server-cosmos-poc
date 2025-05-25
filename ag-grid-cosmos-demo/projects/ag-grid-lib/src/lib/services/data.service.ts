@@ -11,7 +11,7 @@ import { ExportRequest } from '../models/export-request.model';
 export class DataService {
   // Base URL for your .NET backend API.
   // IMPORTANT: Ensure this matches the URL your .NET API is running on.
-  private apiUrl = 'https://localhost:5001/api/data'; // Or http://localhost:5000/api/data
+  private apiUrl = 'https://localhost:7003/api/data'; // Or http://localhost:5000/api/data
 
   constructor(private http: HttpClient) { }
 

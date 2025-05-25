@@ -101,7 +101,7 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
 
     this.gridApiChanged.emit(this.gridApi);
     this.gridReady.emit(params);
-
+  
     this.serverSideDatasource = this.createServerSideDatasource(this.dataService);
 
     // Corrected: Use setGridOption for setting serverSideDatasource

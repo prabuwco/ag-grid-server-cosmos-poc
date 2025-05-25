@@ -1,12 +1,13 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import { ColDef, GridApi, /* ColumnApi */ } from 'ag-grid-community'; // REMOVE ColumnApi import
+import { ColDef, GridApi /* Removed ColumnApi */ } from 'ag-grid-community'; // Removed ColumnApi
 import { AgGridServerSideComponent } from 'ag-grid-lib'; // Import the reusable component
 import { CosmosItem } from 'ag-grid-lib'; // Import the model
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false // Ensure this is false if you are using this in a module context
 })
 export class AppComponent implements AfterViewInit {
   title = 'AG Grid Cosmos DB Demo';
@@ -24,8 +25,7 @@ export class AppComponent implements AfterViewInit {
       field: 'date',
       headerName: 'Date',
       filter: 'agDateColumnFilter', // Use AG Grid's date filter
-      valueFormatter: (params) => { // Directly define formatter here or ensure agGridComponent is ready
-            // Fallback formatter if component not yet initialized
+      valueFormatter: (params) => { // Directly define formatter here for robustness
             if (params.value) {
               try {
                 const date = new Date(params.value);
@@ -58,27 +58,21 @@ export class AppComponent implements AfterViewInit {
   };
 
   public gridApi!: GridApi;
-  // public gridColumnApi!: ColumnApi; // REMOVE THIS DECLARATION
+  // public gridColumnApi!: ColumnApi; // Removed this declaration
   public currentGridData: CosmosItem[] = []; // To store currently displayed data
 
   ngAfterViewInit(): void {
     // The agGridComponent is available here
-    // If you need to apply the date formatter from the child, you can do it here
-    // or ensure that 'dateValueFormatter' is a static method or bound correctly.
-    // For simplicity, I've duplicated the formatter logic in app.component.ts as a fallback
-    // OR ensure this.agGridComponent is available before its first use for columnDefs
-    // A safer way is to define `dateValueFormatter` directly as a static method
-    // or define it directly within the columnDefs object. I'll make it inline.
+    // You can access its methods and properties if needed
   }
 
   onGridApiChanged(api: GridApi): void {
     this.gridApi = api;
     console.log('Grid API received in app component:', this.gridApi);
-    // Any ColumnApi related operations can now be done via this.gridApi
-    // For example, to size columns to fit after grid ready: this.gridApi.sizeColumnsToFit();
   }
 
-  // onGridColumnApiChanged(api: ColumnApi): void { // REMOVE THIS METHOD
+  // Removed onGridColumnApiChanged as ColumnApi is deprecated and merged into GridApi
+  // onGridColumnApiChanged(api: ColumnApi): void {
   //   this.gridColumnApi = api;
   //   console.log('Grid Column API received in app component:', this.gridColumnApi);
   // }

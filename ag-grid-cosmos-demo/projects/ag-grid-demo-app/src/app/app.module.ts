@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 //import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import  'ag-grid-lib';
+import {AgGridLibModule} from  'ag-grid-lib';
 import { HttpClientModule } from '@angular/common/http';
 
 // Removed AG Grid Enterprise Module Registration from here

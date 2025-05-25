@@ -8,9 +8,10 @@
       [paginationPageSize]="20"
       [cacheBlockSize]="100"
       [maxBlocksInCache]="10"
+      [pagination]="true"
+      [rowModelType]="'serverSide'"     
       (gridApiChanged)="onGridApiChanged($event)"
-      (gridColumnApiChanged)="onGridColumnApiChanged($event)"
       (rowDataUpdated)="onRowDataUpdated($event)"
-    ></ag-grid-server-side>
+      ></ag-grid-server-side>
   </div>
 </div>
