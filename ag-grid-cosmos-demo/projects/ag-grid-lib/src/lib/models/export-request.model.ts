@@ -1,5 +1,4 @@
-import { CosmosItem } from './cosmos-item.model';
-export interface ExportRequest {
-    records: CosmosItem[];
-    columnKeys: string[];
-  }
+export interface ExportRequest<T> {
+  records: T[]; // Generic data type for records to export
+  columnKeys: string[];
+}

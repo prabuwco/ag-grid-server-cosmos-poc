@@ -13,7 +13,7 @@ import { CosmosItem } from 'ag-grid-lib'; // Import the model
 export class AppComponent implements AfterViewInit {
   title = 'AG Grid Cosmos DB Demo';
 
-  @ViewChild(AgGridServerSideComponent) agGridComponent!: AgGridServerSideComponent;
+  @ViewChild(AgGridServerSideComponent) agGridComponent!: AgGridServerSideComponent<CosmosItem>;
 
   // Define column definitions for the AG Grid
   public columnDefs: ColDef[] = [

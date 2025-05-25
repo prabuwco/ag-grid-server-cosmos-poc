@@ -4,13 +4,13 @@ import { catchError, Observable, retry, tap, throwError } from 'rxjs';
 import { GridRequest } from '../models/grid-request.model';
 import { GridResponse } from '../models/grid-response.model';
 import { ExportRequest } from '../models/export-request.model';
-import { CosmosItem } from '../models/cosmos-item.model'; // Import the CosmosItem model
+
 
 @Injectable({
   providedIn: 'root' // This service is provided at the root level, making it available throughout the app/library
 })
 export class DataService {
-  
+
   constructor(private http: HttpClient) { }
 
   /**
@@ -18,9 +18,9 @@ export class DataService {
    * @param request The AG Grid request payload (pagination, sorting, filtering, search).
    * @returns An Observable of GridResponse.
    */
-  getGridData(endpointUrl: string,request: GridRequest): Observable<GridResponse> {
+  getGridData<T>(endpointUrl: string, request: GridRequest): Observable<GridResponse<T>> {
     console.log(`Sending grid request to ${endpointUrl}:`, request);
-    return this.http.post<GridResponse>(endpointUrl, request).pipe(
+    return this.http.post<GridResponse<T>>(endpointUrl, request).pipe(
       retry(1), // Retry the request up to 1 time on failure (e.g., network error)
       tap(response => console.log('Received grid data response:', response)), // Log success
       catchError(this.handleError) // Centralized error handling
@@ -32,7 +32,11 @@ export class DataService {
    * Exports all records to an Excel file.
    * @returns An Observable of Blob (the Excel file).
    */
-  exportAllRecords(endpointUrl:string): Observable<Blob> {
+  exportAllRecords<T>(endpointUrl: string): Observable<Blob> {
+    // Note: The backend's /ExportAllRecords endpoint should ideally be generic or
+    // you would need separate endpoints for different data types (e.g., ExportAllProducts).
+    // For now, this method is generic on the frontend for type consistency,
+    // assuming the backend provides a suitable export.
     console.log(`Sending export all request to ${endpointUrl}:`);
     return this.http.get(endpointUrl, { responseType: 'blob' }).pipe(
       retry(1),
@@ -46,7 +50,10 @@ export class DataService {
    * @param request The export request containing records and column keys.
    * @returns An Observable of Blob (the Excel file).
    */
-  exportVisibleRecords(endpointUrl:string,exportRequest: { records: CosmosItem[], columnKeys: string[] }): Observable<Blob> {
+  exportVisibleRecords<T>(endpointUrl: string, exportRequest: { records: T[], columnKeys: string[] }): Observable<Blob> {
+   // Note: The backend's ExportVisible endpoint should be able to handle a List<object>
+    // or a specific type that matches T. If T is not CosmosItem, the backend's
+    // reflection logic in ExcelService will be crucial.
     console.log(`Sending export visible request to ${endpointUrl}:`, exportRequest);
     // ResponseType 'blob' is crucial for file downloads
     return this.http.post(endpointUrl, exportRequest, { responseType: 'blob' }).pipe(

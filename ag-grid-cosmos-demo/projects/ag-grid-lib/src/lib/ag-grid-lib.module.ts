@@ -36,13 +36,14 @@ ModuleRegistry.registerModules([
 
 @NgModule({
   declarations: [
-    AgGridServerSideComponent,
+   
   ],
   imports: [
     CommonModule,
     AgGridAngular, // Import AgGridAngular directly
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    AgGridServerSideComponent
   ],
   exports: [
     AgGridServerSideComponent // Export the component so other apps can use it

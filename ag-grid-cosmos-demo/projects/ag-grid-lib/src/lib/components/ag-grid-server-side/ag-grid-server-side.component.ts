@@ -16,22 +16,30 @@ import {
 import { DataService } from '../../services/data.service';
 import { GridRequest } from '../../models/grid-request.model';
 import { GridResponse } from '../../models/grid-response.model';
-import { CosmosItem } from '../../models/cosmos-item.model';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ExportRequest } from '../../models/export-request.model';
+import { CommonModule } from '@angular/common';
+
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ag-grid-server-side',
   templateUrl: './ag-grid-server-side.component.html',
   styleUrls: ['./ag-grid-server-side.component.scss'],
-  standalone: false // This component is not standalone, it will be used in a module
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    AgGridAngular
+  ]
 })
-export class AgGridServerSideComponent implements OnInit, OnDestroy {
+export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   // Inputs for reusability
-  @Input() columnDefs: ColDef[] = [];
-  @Input() defaultColDef: ColDef = {
+  @Input() columnDefs: ColDef<T>[] = [];
+  @Input() defaultColDef: ColDef<T> = {
     flex: 1,
     minWidth: 100,
     resizable: true,
@@ -52,18 +60,18 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
   @Input() suppressScrollOnNewData: boolean = true; // Prevents scroll reset on new data
   @Input() animateRows: boolean = true;
   @Input() cellSelection: boolean = true;
-  @Input() getRowId: ((params: GetRowIdParams) => string) | undefined; // Function to get unique row ID
+  @Input() getRowId: ((params: GetRowIdParams<T>) => string) | undefined; // Function to get unique row ID
 
 
   // Outputs for parent component to react to grid events or get API instances
-  @Output() gridReady = new EventEmitter<GridReadyEvent>();
-  @Output() gridApiChanged = new EventEmitter<GridApi>();
-  @Output() rowDataUpdated = new EventEmitter<CosmosItem[]>();
+  @Output() gridReady = new EventEmitter<GridReadyEvent<T>>();
+  @Output() gridApiChanged = new EventEmitter<GridApi<T>>();
+  @Output() rowDataUpdated = new EventEmitter<T[]>();
 
   rowModelType: 'serverSide' | 'clientSide' = 'serverSide';
-  public gridOptions: GridOptions = {};
+  public gridOptions: GridOptions<T> = {};
 
-  public gridApi!: GridApi;
+  public gridApi!: GridApi<T>;
   public serverSideDatasource!: IServerSideDatasource;
   public globalSearchText: string = '';
 
@@ -80,13 +88,16 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
 
     // Set a default getRowId if not provided, assuming 'id' is always present and unique
     if (!this.getRowId) {
-      this.getRowId = (params: GetRowIdParams) => {
-        if (!params.data || params.data.id === undefined) {
+      this.getRowId = (params: GetRowIdParams<T>) => {
+        // Assuming 'id' property exists on type T
+        const id = (params.data as any)?.id; // Use 'any' for now, or ensure T has 'id'
+        if (id === undefined) {
           console.error('getRowId: Missing or undefined ID for row data:', params.data);
           return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         }
-        return params.data.id;
+        return String(id);
       };
+
     }
     this.gridOptions = {
       columnDefs: this.columnDefs,
@@ -138,7 +149,7 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
    * Initializes the GridApi and sets up the server-side datasource.
    * @param params GridReadyEvent
    */
-  onGridReady(params: GridReadyEvent): void {
+  onGridReady(params: GridReadyEvent<T>): void {
     this.gridApi = params.api;
 
     this.gridApiChanged.emit(this.gridApi);
@@ -175,8 +186,8 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
           searchQuery: this.globalSearchText // Include global search text
         };
 
-        dataService.getGridData(this.dataEndpointUrl, request).subscribe({
-          next: (response: GridResponse) => {
+        dataService.getGridData<T>(this.dataEndpointUrl, request).subscribe({
+          next: (response: GridResponse<T>) => {
             console.log('Backend response:', response);
             if (response.data) {
               // Corrected: Use the newer 'success' callback
@@ -243,7 +254,7 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
     console.log('Exporting all data to Excel...');
     this.gridOptions.loadingOverlayComponent = true; 
 
-    this.dataService.exportAllRecords(this.exportAllEndpointUrl).subscribe({
+    this.dataService.exportAllRecords<T>(this.exportAllEndpointUrl).subscribe({
       next: (blob: Blob) => {
         this.downloadFile(blob, 'AllRecords.xlsx');
         console.log('All data exported successfully.');
@@ -269,8 +280,8 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
     console.log('Exporting visible data to Excel (current page/rendered rows)...');
 
     // CORRECTED: Get only the currently rendered nodes (rows on the current page)
-    const visibleNodes: IRowNode<any>[] = []; // Changed type to IRowNode<any>
-    this.gridApi.forEachNode((node: IRowNode<any>) => { // Changed type to IRowNode<any>
+    const visibleNodes: IRowNode<T>[] = []; // Changed type to IRowNode<any>
+    this.gridApi.forEachNode((node: IRowNode<T>) => { // Changed type to IRowNode<any>
       // For server-side, forEachNode iterates over the nodes currently in the cache.
       // If pagination is active, this will typically be the nodes for the current page.
       if (node.data) {
@@ -279,14 +290,14 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
     });
 
 
-    const visibleRows: CosmosItem[] = visibleNodes.map(node => node.data);
+    const visibleRows: T[] = visibleNodes.map(node => node.data as T);
 
     // Get all visible column keys
     const visibleColumnKeys: string[] = this.gridApi.getAllDisplayedColumns()
       .map(col => col.getColId())
       .filter(colId => colId !== 'ag-Grid-AutoColumn'); // Exclude internal AG Grid columns
 
-    const exportRequest = {
+    const exportRequest : ExportRequest<T> = {
       records: visibleRows,
       columnKeys: visibleColumnKeys
     };

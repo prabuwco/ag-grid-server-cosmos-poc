@@ -1,7 +1,5 @@
-import { CosmosItem } from './cosmos-item.model';
-
-export interface GridResponse {
-  data: CosmosItem[];
+export interface GridResponse<T> {
+  data: T[]; // Generic data type
   totalRowCount: number;
-  lastContinuationToken?: string; // For advanced pagination if needed
+  lastContinuationToken?: string;
 }
