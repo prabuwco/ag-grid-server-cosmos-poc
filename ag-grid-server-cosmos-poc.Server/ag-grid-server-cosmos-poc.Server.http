@@ -1,6 +1,0 @@
-@ag_grid_server_cosmos_poc.Server_HostAddress = http://localhost:5153
-
-GET {{ag_grid_server_cosmos_poc.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
