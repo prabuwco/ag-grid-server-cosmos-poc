@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
-import { AgGridLibModule, CosmosItem } from 'ag-grid-lib'; // Import CosmosItem model
+import { AgGridLibModule } from 'ag-grid-lib'; // Import CosmosItem model
+import { ProductItem } from '../../models/product-item.model';
 
 @Component({
   selector: 'app-products',
@@ -43,7 +44,7 @@ export class ProductsComponent {
     console.log('Products Grid API received:', api);
   }
 
-  onRowDataUpdated(rowData: CosmosItem[]): void {
+  onRowDataUpdated(rowData: ProductItem[]): void {
     console.log('Products Row data updated. Current visible rows:', rowData.length);
   }
 }

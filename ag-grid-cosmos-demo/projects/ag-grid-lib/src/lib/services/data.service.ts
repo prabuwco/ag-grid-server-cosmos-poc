@@ -3,8 +3,6 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { catchError, Observable, retry, tap, throwError } from 'rxjs';
 import { GridRequest } from '../models/grid-request.model';
 import { GridResponse } from '../models/grid-response.model';
-import { ExportRequest } from '../models/export-request.model';
-
 
 @Injectable({
   providedIn: 'root' // This service is provided at the root level, making it available throughout the app/library
@@ -51,7 +49,7 @@ export class DataService {
    * @returns An Observable of Blob (the Excel file).
    */
   exportVisibleRecords<T>(endpointUrl: string, exportRequest: { records: T[], columnKeys: string[] }): Observable<Blob> {
-   // Note: The backend's ExportVisible endpoint should be able to handle a List<object>
+    // Note: The backend's ExportVisible endpoint should be able to handle a List<object>
     // or a specific type that matches T. If T is not CosmosItem, the backend's
     // reflection logic in ExcelService will be crucial.
     console.log(`Sending export visible request to ${endpointUrl}:`, exportRequest);

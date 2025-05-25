@@ -1,4 +1,4 @@
-export interface CosmosItem {
+export interface ProductItem {
     id: string;
     name: string;
     category: string;
