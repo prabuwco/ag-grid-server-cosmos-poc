@@ -19,7 +19,8 @@
       #agGrid
       class="ag-theme-quartz"
       [gridOptions]="gridOptions"
-      (gridReady)="onGridReady($event)"        
+      (gridReady)="onGridReady($event)"    
+
       (firstDataRendered)="gridApi.sizeColumnsToFit()"
     ></ag-grid-angular>
   </div>

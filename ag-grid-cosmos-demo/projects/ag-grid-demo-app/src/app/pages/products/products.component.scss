@@ -1,7 +1,7 @@
 ag-grid-server-side {
     display: flex;
     flex-grow: 1;
-    height: 500px;
+    height: 100%;
   }
   .main-content { /* This class is now used by page components */
     flex-grow: 1;
@@ -11,4 +11,5 @@ ag-grid-server-side {
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    height: 600px;;
   }

@@ -3,6 +3,9 @@
   <h1>{{ title }}</h1>
   <ag-grid-server-side
     [columnDefs]="columnDefs"   
+    [dataEndpointUrl]="gridDataEndpointApiUrl"
+    [exportAllEndpointUrl]="excelExportAllRecordsApiUrl"
+    [exportVisibleEndpointUrl]="excelExportVisibleRecordsApiUrl"
     (gridApiChanged)="onGridApiChanged($event)"
     (rowDataUpdated)="onRowDataUpdated($event)"
   ></ag-grid-server-side>

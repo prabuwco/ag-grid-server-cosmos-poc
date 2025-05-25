@@ -10,10 +10,7 @@ import { CosmosItem } from '../models/cosmos-item.model'; // Import the CosmosIt
   providedIn: 'root' // This service is provided at the root level, making it available throughout the app/library
 })
 export class DataService {
-  // Base URL for your .NET backend API.
-  // IMPORTANT: Ensure this matches the URL your .NET API is running on.
-  private apiUrl = 'https://localhost:7003/api/data'; // Or http://localhost:5000/api/data
-
+  
   constructor(private http: HttpClient) { }
 
   /**
@@ -21,9 +18,9 @@ export class DataService {
    * @param request The AG Grid request payload (pagination, sorting, filtering, search).
    * @returns An Observable of GridResponse.
    */
-  getGridData(request: GridRequest): Observable<GridResponse> {
-    console.log('Sending grid request:', request);
-    return this.http.post<GridResponse>(`${this.apiUrl}/GetGridData`, request).pipe(
+  getGridData(endpointUrl: string,request: GridRequest): Observable<GridResponse> {
+    console.log(`Sending grid request to ${endpointUrl}:`, request);
+    return this.http.post<GridResponse>(endpointUrl, request).pipe(
       retry(1), // Retry the request up to 1 time on failure (e.g., network error)
       tap(response => console.log('Received grid data response:', response)), // Log success
       catchError(this.handleError) // Centralized error handling
@@ -35,8 +32,9 @@ export class DataService {
    * Exports all records to an Excel file.
    * @returns An Observable of Blob (the Excel file).
    */
-  exportAllRecords(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/ExportAllRecords`, { responseType: 'blob' }).pipe(
+  exportAllRecords(endpointUrl:string): Observable<Blob> {
+    console.log(`Sending export all request to ${endpointUrl}:`);
+    return this.http.get(endpointUrl, { responseType: 'blob' }).pipe(
       retry(1),
       catchError(this.handleError)
     );
@@ -48,9 +46,10 @@ export class DataService {
    * @param request The export request containing records and column keys.
    * @returns An Observable of Blob (the Excel file).
    */
-  exportVisibleRecords(exportRequest: { records: CosmosItem[], columnKeys: string[] }): Observable<Blob> {
+  exportVisibleRecords(endpointUrl:string,exportRequest: { records: CosmosItem[], columnKeys: string[] }): Observable<Blob> {
+    console.log(`Sending export visible request to ${endpointUrl}:`, exportRequest);
     // ResponseType 'blob' is crucial for file downloads
-    return this.http.post(`${this.apiUrl}/ExportVisibleRecords`, exportRequest, { responseType: 'blob' }).pipe(
+    return this.http.post(endpointUrl, exportRequest, { responseType: 'blob' }).pipe(
       retry(1),
       catchError(this.handleError)
     );

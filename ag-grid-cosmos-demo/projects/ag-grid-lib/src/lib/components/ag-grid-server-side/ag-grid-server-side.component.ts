@@ -9,7 +9,9 @@ import {
   ValueFormatterParams,
   GetRowIdParams,
   LoadSuccessParams, // Import LoadSuccessParams for the new success callback
-  GridOptions
+  GridOptions,
+  RowNode,
+  IRowNode
 } from 'ag-grid-community';
 import { DataService } from '../../services/data.service';
 import { GridRequest } from '../../models/grid-request.model';
@@ -37,7 +39,9 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
     filter: true, // Enable all column filters by default
     floatingFilter: true // Show filter input boxes below headers
   };
-  @Input() rowModelType: 'serverSide' | 'clientSide' = 'serverSide';
+  @Input() dataEndpointUrl: string = '';
+  @Input() exportAllEndpointUrl: string = '';
+  @Input() exportVisibleEndpointUrl: string = '';
   @Input() pagination: boolean = true;
   @Input() paginationPageSize: number = 20;
   @Input() cacheBlockSize: number = 100; // How many rows to fetch in one go
@@ -49,13 +53,14 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
   @Input() animateRows: boolean = true;
   @Input() cellSelection: boolean = true;
   @Input() getRowId: ((params: GetRowIdParams) => string) | undefined; // Function to get unique row ID
-  
+
 
   // Outputs for parent component to react to grid events or get API instances
   @Output() gridReady = new EventEmitter<GridReadyEvent>();
   @Output() gridApiChanged = new EventEmitter<GridApi>();
   @Output() rowDataUpdated = new EventEmitter<CosmosItem[]>();
 
+  rowModelType: 'serverSide' | 'clientSide' = 'serverSide';
   public gridOptions: GridOptions = {};
 
   public gridApi!: GridApi;
@@ -68,9 +73,20 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
+    if (!this.dataEndpointUrl) {
+      console.error('AgGridServerSideComponent: dataEndpointUrl input is required.');
+      // Handle this gracefully, e.g., throw an error or display a message
+    }
+
     // Set a default getRowId if not provided, assuming 'id' is always present and unique
     if (!this.getRowId) {
-      this.getRowId = (params: GetRowIdParams) => params.data.id;
+      this.getRowId = (params: GetRowIdParams) => {
+        if (!params.data || params.data.id === undefined) {
+          console.error('getRowId: Missing or undefined ID for row data:', params.data);
+          return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+        return params.data.id;
+      };
     }
     this.gridOptions = {
       columnDefs: this.columnDefs,
@@ -86,8 +102,14 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
       suppressScrollOnNewData: this.suppressScrollOnNewData,
       animateRows: this.animateRows,
       cellSelection: this.cellSelection,
-      getRowId: this.getRowId,     
-      debug: true
+      getRowId: this.getRowId,
+      debug: true,
+      overlayNoRowsTemplate: `<span class="ag-overlay-loading-center" style="color: red;">
+      <i class="fas fa-exclamation-triangle"></i> No Rows to Show or Error Loading Data.
+    </span>`,
+      overlayLoadingTemplate: `<span class="ag-overlay-loading-center">
+      <i class="fas fa-spinner fa-spin"></i> Loading Data...
+    </span>`
     };
     this.setupGlobalSearchDebounce();
   }
@@ -121,11 +143,17 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
 
     this.gridApiChanged.emit(this.gridApi);
     this.gridReady.emit(params);
-  
+    // Initial check for data
+    if (this.dataEndpointUrl) {
+      this.gridApi.setGridOption('serverSideDatasource', this.serverSideDatasource);
+    } else {
+      console.warn('dataEndpointUrl is not provided, grid will not load data.');
+      this.gridApi.showNoRowsOverlay();
+    }
     this.serverSideDatasource = this.createServerSideDatasource(this.dataService);
-
     // Corrected: Use setGridOption for setting serverSideDatasource
     this.gridApi.setGridOption('serverSideDatasource', this.serverSideDatasource);
+
   }
 
   /**
@@ -147,7 +175,7 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
           searchQuery: this.globalSearchText // Include global search text
         };
 
-        dataService.getGridData(request).subscribe({
+        dataService.getGridData(this.dataEndpointUrl, request).subscribe({
           next: (response: GridResponse) => {
             console.log('Backend response:', response);
             if (response.data) {
@@ -211,14 +239,19 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
    * Exports all records from the backend to an Excel file.
    */
   exportAllDataToExcel(): void {
+   
     console.log('Exporting all data to Excel...');
-    this.dataService.exportAllRecords().subscribe({
+    this.gridOptions.loadingOverlayComponent = true; 
+
+    this.dataService.exportAllRecords(this.exportAllEndpointUrl).subscribe({
       next: (blob: Blob) => {
         this.downloadFile(blob, 'AllRecords.xlsx');
         console.log('All data exported successfully.');
+        this.gridOptions.loadingOverlayComponent = false; 
       },
       error: (error) => {
         console.error('Error exporting all data:', error);
+        this.gridOptions.loadingOverlayComponent = false; 
         // Optionally, show a user-friendly error message
       }
     });
@@ -233,18 +266,23 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Exporting visible data to Excel...');
+    console.log('Exporting visible data to Excel (current page/rendered rows)...');
 
-    // Get all visible rows in the grid
-    const visibleRows: CosmosItem[] = [];
-    this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+    // CORRECTED: Get only the currently rendered nodes (rows on the current page)
+    const visibleNodes: IRowNode<any>[] = []; // Changed type to IRowNode<any>
+    this.gridApi.forEachNode((node: IRowNode<any>) => { // Changed type to IRowNode<any>
+      // For server-side, forEachNode iterates over the nodes currently in the cache.
+      // If pagination is active, this will typically be the nodes for the current page.
       if (node.data) {
-        visibleRows.push(node.data);
+        visibleNodes.push(node);
       }
     });
 
-    // Get all visible column keys - now accessed via gridApi.getDisplayedColumns()
-    const visibleColumnKeys: string[] = this.gridApi.getAllDisplayedColumns() // Correct usage for GridApi
+
+    const visibleRows: CosmosItem[] = visibleNodes.map(node => node.data);
+
+    // Get all visible column keys
+    const visibleColumnKeys: string[] = this.gridApi.getAllDisplayedColumns()
       .map(col => col.getColId())
       .filter(colId => colId !== 'ag-Grid-AutoColumn'); // Exclude internal AG Grid columns
 
@@ -253,17 +291,17 @@ export class AgGridServerSideComponent implements OnInit, OnDestroy {
       columnKeys: visibleColumnKeys
     };
 
-    this.dataService.exportVisibleRecords(exportRequest).subscribe({
+    this.dataService.exportVisibleRecords(this.exportVisibleEndpointUrl, exportRequest).subscribe({
       next: (blob: Blob) => {
         this.downloadFile(blob, 'VisibleRecords.xlsx');
         console.log('Visible data exported successfully.');
       },
       error: (error) => {
         console.error('Error exporting visible data:', error);
-        // Optionally, show a user-friendly error message
       }
     });
   }
+
 
   /**
    * Helper function to trigger file download in the browser.
