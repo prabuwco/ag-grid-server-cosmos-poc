@@ -1,0 +1,9 @@
+<span class="description-text">
+    {{ displayedText }}
+    <ng-container *ngIf="showToggleButton">
+      <span class="toggle-icon" (click)="toggleDescription()">
+        <ng-container *ngIf="!displayFullDescription">+</ng-container>
+        <ng-container *ngIf="displayFullDescription">-</ng-container>
+      </span>
+    </ng-container>
+  </span>

@@ -1,0 +1,18 @@
+.description-text {
+    /* Ensure text doesn't overflow without button if not needed */
+    white-space: normal; // Allows text to wrap within the cell
+    overflow: hidden;
+    text-overflow: ellipsis; /* This will only work if white-space is nowrap or limited height */
+  }
+  
+  .toggle-icon {
+    margin-left: 5px;
+    cursor: pointer;
+    color: blue; /* Or any color you prefer */
+    font-weight: bold;
+    user-select: none; /* Prevent text selection on click */
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
