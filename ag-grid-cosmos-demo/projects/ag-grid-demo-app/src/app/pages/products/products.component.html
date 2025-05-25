@@ -1,12 +1,10 @@
-
 <div class="main-content">
   <h1>{{ title }}</h1>
-  <ag-grid-server-side
-    [columnDefs]="columnDefs"   
-    [dataEndpointUrl]="gridDataEndpointApiUrl"
-    [exportAllEndpointUrl]="excelExportAllRecordsApiUrl"
-    [exportVisibleEndpointUrl]="excelExportVisibleRecordsApiUrl"
-    (gridApiChanged)="onGridApiChanged($event)"
-    (rowDataUpdated)="onRowDataUpdated($event)"
-  ></ag-grid-server-side>
+  <ag-grid-server-side [columnDefs]="columnDefs" [dataEndpointUrl]="gridDataEndpointApiUrl"
+    [exportAllEndpointUrl]="excelExportAllRecordsApiUrl" [exportVisibleEndpointUrl]="excelExportVisibleRecordsApiUrl"
+    (gridApiChanged)="onGridApiChanged($event)" (gridReady)="onGridApiReady($event.api)"  (paginationChanged)="onGridPaginationChanged($event)" (rowDataUpdated)="onRowDataUpdated($event)">
+  </ag-grid-server-side>
+  <app-jump-to-page [gridApi]="gridApi" [currentPage]="currentPage" [totalPages]="totalPages" [totalRows]="totalRows">
+  </app-jump-to-page>
+
 </div>

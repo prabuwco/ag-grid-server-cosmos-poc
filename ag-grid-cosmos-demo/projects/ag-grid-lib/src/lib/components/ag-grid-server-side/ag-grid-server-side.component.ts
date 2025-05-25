@@ -11,7 +11,8 @@ import {
   LoadSuccessParams, // Import LoadSuccessParams for the new success callback
   GridOptions,
   RowNode,
-  IRowNode
+  IRowNode,
+  PaginationChangedEvent
 } from 'ag-grid-community';
 import { DataService } from '../../services/data.service';
 import { GridRequest } from '../../models/grid-request.model';
@@ -67,6 +68,7 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
   @Output() gridReady = new EventEmitter<GridReadyEvent<T>>();
   @Output() gridApiChanged = new EventEmitter<GridApi<T>>();
   @Output() rowDataUpdated = new EventEmitter<T[]>();
+  @Output() paginationChanged = new EventEmitter<PaginationChangedEvent>();
 
   rowModelType: 'serverSide' | 'clientSide' = 'serverSide';
   public gridOptions: GridOptions<T> = {};
@@ -128,6 +130,10 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
     if (this.globalSearchSubscription) {
       this.globalSearchSubscription.unsubscribe();
     }
+    if (this.gridApi) {
+      this.gridApi.removeEventListener('paginationChanged', this.onPaginationChanged.bind(this));
+    }
+
   }
 
   /**
@@ -164,6 +170,11 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
     // Corrected: Use setGridOption for setting serverSideDatasource
     this.gridApi.setGridOption('serverSideDatasource', this.serverSideDatasource);
 
+  }
+  // Handler for AG Grid's paginationChanged event
+  onPaginationChanged(event: PaginationChangedEvent): void { 
+    // Re-emit the event to the parent component
+    this.paginationChanged.emit(event);
   }
 
   /**
@@ -353,5 +364,6 @@ export class AgGridServerSideComponent<T> implements OnInit, OnDestroy {
       }
     }
     return '';
-  }
+  }  
+
 }
